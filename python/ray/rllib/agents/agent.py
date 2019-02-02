@@ -11,9 +11,8 @@ import six
 import tempfile
 import tensorflow as tf
 from types import FunctionType
-
-import ray
 from ray.rllib.offline import NoopOutput, JsonReader, MixedInput, JsonWriter
+from ray.rllib.online import SlsReader, MockSlsReader
 from ray.rllib.models import MODEL_DEFAULTS
 from ray.rllib.evaluation.policy_evaluator import PolicyEvaluator
 from ray.rllib.evaluation.sample_batch import DEFAULT_POLICY_ID
@@ -141,6 +140,7 @@ COMMON_CONFIG = {
     #    {"sampler": 0.4, "/tmp/*.json": 0.4, "s3://bucket/expert.json": 0.2}).
     #  - a function that returns a rllib.offline.InputReader
     "input": "sampler",
+    "sls" : None,
     # Specify how to evaluate the current policy. This only makes sense to set
     # when the input is not already generating simulation data:
     #  - None: don't evaluate the policy. The episode reward and other
@@ -538,6 +538,8 @@ class Agent(Trainable):
                 and config["input_evaluation"] is not None):
             raise ValueError(
                 "`input_evaluation` should not be set when input=sampler")
+        if (config["input"].startswith("sls") and config["sls"] is None):
+            raise ValueError("should set sls configurations when input starts with sls")        
 
     def _make_evaluator(self, cls, env_creator, policy_graph, worker_index,
                         config):
@@ -553,6 +555,10 @@ class Agent(Trainable):
             input_creator = (lambda ioctx: ioctx.default_sampler_input())
         elif isinstance(config["input"], dict):
             input_creator = (lambda ioctx: MixedInput(config["input"], ioctx))
+        elif config["input"].startswith("sls"):
+            input_creator = (lambda ioctx: SlsReader(dict(config["sls"]))
+        elif config["input"].startswith("sls_mock"):  
+            input_creator = (lambda ioctx: MockSlsReader(dict(config["sls"]))  
         else:
             input_creator = (lambda ioctx: JsonReader(config["input"], ioctx))
 

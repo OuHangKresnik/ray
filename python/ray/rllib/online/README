@@ -1,0 +1,4 @@
+This directory contains all temp code for connecting streaming and reinforcement learning framework
+
+Environment Setup:
+  pip install -U aliyun-log-python-sdk
