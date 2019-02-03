@@ -140,7 +140,14 @@ COMMON_CONFIG = {
     #    {"sampler": 0.4, "/tmp/*.json": 0.4, "s3://bucket/expert.json": 0.2}).
     #  - a function that returns a rllib.offline.InputReader
     "input": "sampler",
-    "sls" : None,
+    "sls" : {
+        "endpoint" : None,
+        "access_key_id" : None,
+        "access_key" : None,
+        "log_store" : None,
+        "project" : None,
+        "start_timestamp" : None
+    },
     # Specify how to evaluate the current policy. This only makes sense to set
     # when the input is not already generating simulation data:
     #  - None: don't evaluate the policy. The episode reward and other
@@ -556,9 +563,11 @@ class Agent(Trainable):
         elif isinstance(config["input"], dict):
             input_creator = (lambda ioctx: MixedInput(config["input"], ioctx))
         elif config["input"].startswith("sls"):
-            input_creator = (lambda ioctx: SlsReader(config, ioctx))
+            input_creator = (lambda ioctx: SlsReader(
+                merge_dict(dict(config["sls"]),{"train_batch_size" : config["train_batch_size"]}), ioctx))
         elif config["input"].startswith("mock_sls"):
-            input_creator = (lambda ioctx: MockSlsReader(config, ioctx))  
+            input_creator = (lambda ioctx: MockSlsReader(
+                merge_dict(dict(config["sls"]),{"train_batch_size" : config["train_batch_size"]}), ioctx))  
         else:
             input_creator = (lambda ioctx: JsonReader(config["input"], ioctx))
 

@@ -28,7 +28,7 @@ class MockSlsReader(InputReader):
     def __init__(self, config, ioctx=None):
         self._ioctx = ioctx or IOContext()
         self._batch_size = config.get("train_batch_size")
-        shards = os.path.join("/tmp/cartpole-out", "*.json")
+        shards = glob.glob(os.path.join("/tmp/cartpole-out", "*.json"))
         import numpy as np
         shard_split = np.array_split(np.asarray(range(len(shards))), ioctx.num_evaluators)
         self._shard_ids = []
@@ -36,10 +36,11 @@ class MockSlsReader(InputReader):
             self._shard_ids.append(shards[i])
         
         self.files = self._shard_ids
-        logger.info("Sls Reader of worker: " + str(ioctx.worker_index) + " inited with Shards: " + str(self._shard_ids)) 
+        print("Sls Reader of worker: " + str(ioctx.worker_index) + " inited with Shards: " + str(self._shard_ids)) 
         self._batch_size_per_shard = int(self._batch_size / len(self._shard_ids)) + int(self._batch_size % len(self._shard_ids))
-        logger.info("Sls Reader of worker: "
-            + str(ioctx.worker_index) + " inited with batch size per shard: " + str(self._batch_size_per_shard)) 
+        print("Sls Reader of worker: "
+            + str(ioctx.worker_index) + " inited with batch size per shard: " + str(self._batch_size_per_shard))
+        self.cur_file = None    
       
 
     @override(InputReader)  
@@ -57,13 +58,13 @@ class MockSlsReader(InputReader):
         return self._postprocess_if_needed(batch)
 
     def _postprocess_if_needed(self, batch):
-        if not self.ioctx.config.get("postprocess_inputs"):
+        if not self._ioctx.config.get("postprocess_inputs"):
             return batch
 
         if isinstance(batch, SampleBatch):
             out = []
             for sub_batch in batch.split_by_episode():
-                out.append(self.ioctx.evaluator.policy_map[DEFAULT_POLICY_ID]
+                out.append(self._ioctx.evaluator.policy_map[DEFAULT_POLICY_ID]
                            .postprocess_trajectory(sub_batch))
             return SampleBatch.concat_samples(out)
         else:
