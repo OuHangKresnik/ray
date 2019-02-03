@@ -1,4 +1,23 @@
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import glob
+import json
 import logging
+import os
+import random
+import six
+from six.moves.urllib.parse import urlparse
+
+try:
+    from smart_open import smart_open
+except ImportError:
+    smart_open = None
+
+from ray.rllib.evaluation.sample_batch import MultiAgentBatch, SampleBatch, \
+    DEFAULT_POLICY_ID
+from ray.rllib.utils.compression import unpack_if_needed    
 
 logger = logging.getLogger(__name__)
 
@@ -8,7 +27,7 @@ class MockSlsReader(object):
         self._batch_size = config.get("batch_size")
         shards = os.path.join("/tmp/cartpole-out", "*.json")
         import numpy as np
-        shard_split = np.array_split(np.asarray(range(len(shards)), ioctx.num_evaluators)
+        shard_split = np.array_split(np.asarray(range(len(shards))), ioctx.num_evaluators)
         self._shard_ids = []
         for i in shard_split[ioctx.worker_index]:
             self._shard_ids.append(shards[i])
