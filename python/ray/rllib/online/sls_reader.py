@@ -20,7 +20,7 @@ class SlsReader(object):
             config.get("endpoint"),
             config.get("access_key_id"),
             config.get("access_key"))
-        self._batch_size = config.get("batch_size")
+        self._batch_size = config.get("train_batch_size")
         self._start_timestamp = config.get("start_timestamp")
         shards = self._logClient.list_shards(self._project, self._logStore).get_shards_info()
         import numpy as np

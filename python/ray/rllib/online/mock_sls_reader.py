@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class MockSlsReader(object):
     def __init__(self, config, ioctx=None):
         self._ioctx = ioctx or IOContext()
-        self._batch_size = config.get("batch_size")
+        self._batch_size = config.get("train_batch_size")
         shards = os.path.join("/tmp/cartpole-out", "*.json")
         import numpy as np
         shard_split = np.array_split(np.asarray(range(len(shards))), ioctx.num_evaluators)
