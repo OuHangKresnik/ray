@@ -51,11 +51,11 @@ class SlsReader(object):
         
 if __name__ == "__main__":
     conf = {
-        "endpoint" : "cn-shanghai-ant-share.log.aliyuncs.com",
-        "access_key_id" : "LTAILcBUr9lOpyfz",
-        "access_key" : "3YYiBvOPZAGarcUtleGjZHLefMG9VJ",
-        "project" : "ant-prizecore-lottery-received",
-        "log_store" : "ant-prizecore-lottery-received",
+        "endpoint" : "",
+        "access_key_id" : "",
+        "access_key" : "",
+        "project" : "",
+        "log_store" : "",
         "batch_size_per_shard" : 10,
         "start_timestamp" : time.time() - 1000
     }
