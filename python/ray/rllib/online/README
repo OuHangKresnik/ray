@@ -7,5 +7,4 @@ Environment Setup:
 Local Run:
 
 rllib train --run=PG --env=CartPole-v0 --config='{"output": "/tmp/cartpole-out", "output_max_file_size": 5000000}' --stop='{"timesteps_total": 100000}' --ray-num-nodes 1
-
-rllib train  --run=DQN --env=CartPole-v0  --config='{"input": "sls_mock://tmp/cartpole-out", "exploration_final_eps": 0,"exploration_fraction": 0, "sls":{"sls_access_key" : "sls_access_key", "sls_access_key_id" : "sls_access_key_id","sls_project","sls_logstore" : "sls_logstore", "batch_size":10, "start_timestamp":10,"sls_endpoint":"endpoint"}}' --ray-num-nodes 2
+rllib train  --run=DQN --env=CartPole-v0  --config='{"input": "mock_sls://tmp/cartpole-out", "exploration_final_eps": 0,"exploration_fraction": 0, "sls":{"endpoint":0},"num_workers":1}' --ray-num-nodes 2

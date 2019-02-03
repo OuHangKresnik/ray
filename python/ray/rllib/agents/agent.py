@@ -564,10 +564,10 @@ class Agent(Trainable):
             input_creator = (lambda ioctx: MixedInput(config["input"], ioctx))
         elif config["input"].startswith("sls"):
             input_creator = (lambda ioctx: SlsReader(
-                merge_dict(dict(config["sls"]),{"train_batch_size" : config["train_batch_size"]}), ioctx))
+                merge_dicts(dict(config["sls"]),{"train_batch_size" : config["train_batch_size"]}), ioctx))
         elif config["input"].startswith("mock_sls"):
             input_creator = (lambda ioctx: MockSlsReader(
-                merge_dict(dict(config["sls"]),{"train_batch_size" : config["train_batch_size"]}), ioctx))  
+                merge_dicts(dict(config["sls"]),{"train_batch_size" : config["train_batch_size"]}), ioctx))  
         else:
             input_creator = (lambda ioctx: JsonReader(config["input"], ioctx))
 
