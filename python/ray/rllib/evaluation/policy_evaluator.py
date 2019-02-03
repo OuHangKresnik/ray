@@ -348,7 +348,7 @@ class PolicyEvaluator(EvaluatorInterface):
                 tf_sess=self.tf_sess,
                 clip_actions=clip_actions)
 
-        self.io_context = IOContext(log_dir, policy_config, worker_index, self)
+        self.io_context = IOContext(log_dir, policy_config, worker_index, self, policy_config["num_workers"] + 1)
         self.input_reader = input_creator(self.io_context)
         assert isinstance(self.input_reader, InputReader), self.input_reader
         self.output_writer = output_creator(self.io_context)

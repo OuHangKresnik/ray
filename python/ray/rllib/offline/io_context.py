@@ -27,11 +27,13 @@ class IOContext(object):
                  log_dir=None,
                  config=None,
                  worker_index=0,
-                 evaluator=None):
+                 evaluator=None,
+                 num_evaluators=1):
         self.log_dir = log_dir or os.getcwd()
         self.config = config or {}
         self.worker_index = worker_index
         self.evaluator = evaluator
+        self.num_evaluators = num_evaluators
 
     @PublicAPI
     def default_sampler_input(self):
