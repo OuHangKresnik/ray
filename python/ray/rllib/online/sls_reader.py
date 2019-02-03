@@ -24,12 +24,12 @@ class SlsReader(object):
         self._start_timestamp = config.get("start_timestamp")
         shards = self._logClient.list_shards(self._project, self._logStore).get_shards_info()
         import numpy as np
-        shard_split = np.array_split(np.asarray(range(shards.len())), ioctx.num_evaluators)
+        shard_split = np.array_split(np.asarray(range(len(shards))), ioctx.num_evaluators)
         self._shard_ids = []
         for i in shard_split[ioctx.worker_index]:
             self._shard_ids.append(shards[i]["shardID"])
         logger.info("Sls Reader of worker: " + str(ioctx.worker_index) + " inited with Shards: " + str(self._shard_ids))
-        self._batch_size_per_shard = self._batch_size / self._shard_ids.len() + self._batch_size % self._shard_ids.len()
+        self._batch_size_per_shard = int(self._batch_size / len(self._shard_ids)) + int(self._batch_size % len(self._shard_ids))
         logger.info("Sls Reader of worker: "
             + str(ioctx.worker_index) + " inited with batch size per shard: " + str(self._batch_size_per_shard))
 
