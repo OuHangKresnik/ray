@@ -15,13 +15,15 @@ try:
 except ImportError:
     smart_open = None
 
+from ray.rllib.offline.input_reader import InputReader
 from ray.rllib.evaluation.sample_batch import MultiAgentBatch, SampleBatch, \
     DEFAULT_POLICY_ID
 from ray.rllib.utils.compression import unpack_if_needed    
 
 logger = logging.getLogger(__name__)
 
-class MockSlsReader(object):
+class MockSlsReader(InputReader):
+    @PublicAPI
     def __init__(self, config, ioctx=None):
         self._ioctx = ioctx or IOContext()
         self._batch_size = config.get("train_batch_size")
@@ -38,6 +40,8 @@ class MockSlsReader(object):
         logger.info("Sls Reader of worker: "
             + str(ioctx.worker_index) + " inited with batch size per shard: " + str(self._batch_size_per_shard)) 
       
+
+    @override(InputReader)  
     def next(self):
         batch = self._try_parse(self._next_line())
         tries = 0

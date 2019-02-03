@@ -10,7 +10,7 @@ from ray.rllib.utils.annotations import override, PublicAPI
 logger = logging.getLogger(__name__)
 
 @PublicAPI
-class SlsReader(object):
+class SlsReader(InputReader):
     @PublicAPI
     def __init__(self, config, ioctx=None):
         self._ioctx = ioctx or IOContext()
@@ -43,6 +43,7 @@ class SlsReader(object):
                     self._start_timestamp).get_cursor()})           
         self._data_queue = queue.Queue()
 
+    @override(InputReader)
     def next(self):
         if self._data_queue.qsize() < self._batch_size:
             for shard_id in self._shard_ids:
