@@ -4,7 +4,6 @@ from __future__ import print_function
 
 import os
 
-from ray.rllib.offline.input_reader import SamplerInput
 from ray.rllib.utils.annotations import PublicAPI
 
 
@@ -37,4 +36,4 @@ class IOContext(object):
 
     @PublicAPI
     def default_sampler_input(self):
-        return SamplerInput(self.evaluator.sampler)
+        return self.evaluator.sampler
